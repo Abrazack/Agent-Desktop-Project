@@ -1,0 +1,32 @@
+{
+    "admin": {
+        "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+        "role": "admin"
+    },
+    "John Smith": {
+        "password": "c75f28325cfa028ea13872f977a29e0e87c99a4f390fe260f24d7e1f05fb8d75",
+        "role": "employee",
+        "email": "jsmith@gmail.com",
+        "phone": "5142280000",
+        "department": "Sales",
+        "job_title": "Representative"
+    },
+    "hsma": {
+        "password": "e0f1a1c2ca903fa749e627a56d3038c46dbf38a39237369c3e7e12fcd678045b",
+        "role": "employee",
+        "full_name": "Hamza Sma",
+        "email": "hsma@gmail.com",
+        "phone": "4184472200",
+        "department": "Sales",
+        "job_title": "Sales Representatative"
+    },
+    "jlevesque": {
+        "password": "acda966fb02acfeaa6bc25cd2ceaf4ce7e2c0817d08a533a2a10269bc93afe4a",
+        "role": "employee",
+        "full_name": "John Miller Levesque",
+        "email": "le.1@x.com",
+        "phone": "4176653212",
+        "department": "Sales",
+        "job_title": "Representative"
+    }
+}

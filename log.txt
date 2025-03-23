@@ -1,0 +1,69 @@
+2025-03-22 10:51:10.205208 - Failed login attempt for admin as employee.
+2025-03-22 10:51:20.731635 - Failed login attempt for admin as admin.
+2025-03-22 10:51:28.803503 - admin (admin) logged in successfully.
+2025-03-22 10:53:49.469558 - admin (admin) logged in successfully.
+2025-03-22 10:56:46.327280 - admin (admin) logged in successfully.
+2025-03-22 11:02:21.677991 - admin (admin) logged in successfully.
+2025-03-22 11:07:32.273803 - admin (admin) logged in successfully.
+2025-03-22 11:15:22.904569 - admin (admin) logged in successfully.
+2025-03-22 11:15:59.186312 - admin (admin) logged in successfully.
+2025-03-22 11:17:04.669861 - admin (admin) logged in successfully.
+2025-03-22 11:30:10.962599 - admin (admin) logged in successfully.
+2025-03-22 11:30:33.050530 - admin (admin) logged in successfully.
+2025-03-22 11:33:14.185379 - admin (admin) logged in successfully.
+2025-03-22 11:34:01.031173 - Employee John Smith added.
+2025-03-22 11:40:14.920218 - John Smith (employee) logged in successfully.
+2025-03-22 11:41:22.782013 - admin (admin) logged in successfully.
+2025-03-22 11:56:50.207556 - admin (admin) logged in successfully.
+2025-03-22 11:59:55.894268 - admin (admin) logged in successfully.
+2025-03-22 12:00:42.677947 - admin (admin) logged in successfully.
+2025-03-22 12:08:35.655439 - Failed login attempt for admin as employee.
+2025-03-22 12:08:39.421422 - admin (admin) logged in successfully.
+2025-03-22 12:13:06.096819 - admin (admin) logged in successfully.
+2025-03-22 13:22:09.610804 - admin (admin) logged in successfully.
+2025-03-22 13:23:19.207487 - Employee hsma added.
+2025-03-22 13:27:19.727660 - Failed login attempt for admin as admin.
+2025-03-22 13:27:29.324594 - Failed login attempt for admin as admin.
+2025-03-22 13:27:45.523504 - Failed login attempt for admin as admin.
+2025-03-22 13:31:12.365880 - Failed login attempt for admin as admin.
+2025-03-22 13:31:19.063980 - Failed login attempt for admin as admin.
+2025-03-22 13:31:42.103270 - Failed login attempt for admin as admin.
+2025-03-22 13:32:17.247052 - Failed login attempt for admin as admin.
+2025-03-22 13:35:51.405042 - Failed login attempt for admin as admin.
+2025-03-22 13:37:13.615695 - Failed login attempt for admin as admin.
+2025-03-22 13:37:20.623048 - Failed login attempt for Admin as admin.
+2025-03-22 13:37:33.901289 - Admin credentials reset to default.
+2025-03-22 13:37:40.839302 - admin (admin) logged in successfully.
+2025-03-22 13:53:29.823073 - admin (admin) logged in successfully.
+2025-03-22 13:54:53.768335 - Employee jlevesque added.
+2025-03-22 13:55:56.305404 - Inventory item Kanzu added.
+2025-03-22 13:57:23.429854 - Employee hsma edited.
+2025-03-22 13:58:21.420946 - admin (admin) logged in successfully.
+2025-03-22 14:07:57.717747 - admin (admin) logged in successfully.
+2025-03-22 14:09:28.584727 - Employee hsma edited.
+2025-03-22 14:10:04.626256 - Failed login attempt for hsma as employee.
+2025-03-22 14:10:26.678197 - Failed login attempt for hsma as employee.
+2025-03-22 14:10:30.977518 - Failed login attempt for hsma as employee.
+2025-03-22 14:10:34.730790 - Failed login attempt for hsma as employee.
+2025-03-22 14:10:40.186855 - Failed login attempt for hsma as employee.
+2025-03-22 14:11:12.801579 - Failed login attempt for hsma as employee.
+2025-03-22 14:11:31.951503 - admin (admin) logged in successfully.
+2025-03-22 14:12:09.355785 - Password reset for hsma.
+2025-03-22 14:13:18.946738 - Failed login attempt for hsma as employee.
+2025-03-22 14:13:44.458487 - Failed login attempt for hsma as employee.
+2025-03-22 14:13:46.754283 - Failed login attempt for hsma as employee.
+2025-03-22 14:38:29.116112 - admin (admin) logged in successfully.
+2025-03-22 14:39:33.013493 - admin (admin) logged in successfully.
+2025-03-22 14:51:53.119402 - admin (admin) logged in successfully.
+2025-03-22 15:29:54.308595 - admin (admin) logged in successfully.
+2025-03-22 15:31:51.148477 - Employee John Smith edited.
+2025-03-22 15:33:40.366160 - Inventory item Kanxu added.
+2025-03-22 16:13:27.801539 - admin (admin) logged in successfully.
+2025-03-22 16:14:37.660903 - Supplier Alghaly added.
+2025-03-22 16:14:53.355214 - Supplier Alghaly edited.
+2025-03-22 16:28:37.352145 - Failed login attempt for admin  as admin.
+2025-03-22 16:28:40.863138 - admin (admin) logged in successfully.
+2025-03-22 20:15:39.614516 - admin (admin) logged in successfully.
+2025-03-22 20:16:40.967903 - admin (admin) logged in successfully.
+2025-03-22 20:21:00.412231 - admin (admin) logged in successfully.
+2025-03-23 10:20:54.086954 - admin (admin) logged in successfully.
