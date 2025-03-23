@@ -3,9 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Management Pro</title>
+    <title>Mhappy Online Store</title>
     <style>
-        /* CSS remains the same */
+        /* Your original CSS preserved */
+        :root {
+            --primary-color: #2f7366;
+            --secondary-color: #f3a157;
+            --accent-color: #0261d9;
+            --background-color: #f3ddb3;
+            --text-light: #ffffff;
+            --danger-color: #d87487;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            background-color: var(--background-color);
+            color: #333;
+        }
+
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--background-color);
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        .header { 
+            background-color: var(--primary-color); 
+            color: var(--text-light); 
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 1rem;
+            background-color: var(--secondary-color);
+            justify-content: center;
+        }
+
+        .nav-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            background-color: var(--accent-color);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-button:hover {
+            background-color: #004a9f;
+            transform: translateY(-1px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .action-button {
+            padding: 0.5rem 1rem;
+            margin: 0 0.25rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .action-button:hover {
+            opacity: 0.9;
+        }
+
+        .edit { background-color: var(--secondary-color); }
+        .delete { background-color: var(--danger-color); }
+        .success { background-color: #4CAF50; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .hidden { display: none; }
+
+        .settings-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .password-strength {
+            height: 4px;
+            margin-top: 5px;
+            background: #ddd;
+        }
+
+        .strength-weak { background: #ff4444; width: 33%; }
+        .strength-medium { background: #ffbb33; width: 66%; }
+        .strength-strong { background: #00C851; width: 100%; }
+
+        .currency-display::before {
+            content: attr(data-currency);
+            margin-right: 5px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -49,86 +225,236 @@
 
         <!-- Main Content -->
         <main class="container">
-            <!-- Sections remain the same -->
+            <!-- Employees Section -->
+            <section id="employees" class="section">
+                <div class="section-header">
+                    <h2 data-localize="manage_employees">Manage Employees</h2>
+                    <button class="action-button success" onclick="showEmployeeForm()">➕ Add Employee</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Salary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeList"></tbody>
+                </table>
+            </section>
+
+            <!-- Inventory Section -->
+            <section id="inventory" class="section hidden">
+                <div class="section-header">
+                    <h2>Manage Inventory</h2>
+                    <button class="action-button success" onclick="showInventoryForm()">➕ Add Product</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryList"></tbody>
+                </table>
+            </section>
+
+            <!-- Sales Section -->
+            <section id="sales" class="section hidden">
+                <div class="section-header">
+                    <h2>Sales Management</h2>
+                    <div>
+                        <span class="currency-display" data-currency="USD" id="totalIncome">0.00</span>
+                        <button class="action-button success" onclick="showSaleForm()">➕ New Sale</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesList"></tbody>
+                </table>
+            </section>
         </main>
 
         <!-- Settings Modal -->
         <div class="modal" id="settingsModal">
             <div class="modal-content">
-                <h3 data-localize="system_settings">System Settings</h3>
+                <h3>System Settings</h3>
                 <div class="settings-tabs">
                     <button class="action-button" onclick="showSettingsTab('user')">Users</button>
                     <button class="action-button" onclick="showSettingsTab('security')">Security</button>
                     <button class="action-button" onclick="showSettingsTab('localization')">Localization</button>
                 </div>
 
-                <!-- Settings tabs content remains the same -->
+                <!-- User Management -->
+                <div id="userSettings" class="settings-tab">
+                    <h4>Manage Users</h4>
+                    <button class="action-button success" onclick="showUserForm()">➕ Add User</button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userList"></tbody>
+                    </table>
+                </div>
+
+                <!-- Security Settings -->
+                <div id="securitySettings" class="settings-tab hidden">
+                    <h4>Change Password</h4>
+                    <div class="form-group">
+                        <input type="password" id="currentPassword" placeholder="Current Password">
+                        <input type="password" id="newPassword" placeholder="New Password" oninput="checkPasswordStrength(this.value)">
+                        <div class="password-strength">
+                            <div id="passwordStrength"></div>
+                        </div>
+                        <button class="action-button success" onclick="changePassword()">Update</button>
+                    </div>
+                </div>
+
+                <!-- Localization Settings -->
+                <div id="localizationSettings" class="settings-tab hidden">
+                    <h4>Localization Settings</h4>
+                    <div class="form-group">
+                        <label>Language</label>
+                        <select id="languageSelect" onchange="updateLanguage(this.value)">
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="currencySelect" onchange="updateCurrency(this.value)">
+                            <option value="USD">US Dollar ($)</option>
+                            <option value="EUR">Euro (€)</option>
+                            <option value="JPY">Japanese Yen (¥)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Improved System Configuration
-        const SYSTEM_CONFIG = {
-            exchangeRates: { USD: 1, EUR: 0.93, JPY: 148.5 },
+        // Enhanced Data Management
+        const BusinessManager = {
             currentUser: null,
-            users: JSON.parse(localStorage.getItem('users')) || [
-                { username: 'admin', password: 'admin123', role: 'admin' }
-            ],
+            users: JSON.parse(localStorage.getItem('users')) || [{ username: 'admin', password: 'admin123', role: 'admin' }],
             employees: JSON.parse(localStorage.getItem('employees')) || [],
             inventory: JSON.parse(localStorage.getItem('inventory')) || [],
             sales: JSON.parse(localStorage.getItem('sales')) || [],
-            totalIncome: parseFloat(localStorage.getItem('totalIncome')) || 0,
-            settings: JSON.parse(localStorage.getItem('settings')) || {
-                language: 'en',
-                currency: 'USD'
+            settings: JSON.parse(localStorage.getItem('settings')) || { language: 'en', currency: 'USD' },
+            
+            saveData() {
+                localStorage.setItem('users', JSON.stringify(this.users));
+                localStorage.setItem('employees', JSON.stringify(this.employees));
+                localStorage.setItem('inventory', JSON.stringify(this.inventory));
+                localStorage.setItem('sales', JSON.stringify(this.sales));
+                localStorage.setItem('settings', JSON.stringify(this.settings));
             },
-            translations: {
-                en: {
-                    welcome: "Welcome to Mhappy Online Store",
-                    username: "Username",
-                    password: "Password",
-                    login: "Login",
-                    settings: "Settings",
-                    name: "Name",
-                    position: "Position",
-                    salary: "Salary",
-                    actions: "Actions",
-                    add_employee: "Add Employee",
-                    manage_employees: "Manage Employees"
-                },
-                es: { /* Spanish translations */ },
-                fr: { /* French translations */ }
+            
+            login(username, password) {
+                const user = this.users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    this.currentUser = user;
+                    return true;
+                }
+                return false;
+            },
+            
+            addEmployee(employee) {
+                this.employees.push({ ...employee, id: Date.now() });
+                this.saveData();
+            },
+            
+            updateEmployee(id, updates) {
+                const index = this.employees.findIndex(e => e.id === id);
+                if (index > -1) {
+                    this.employees[index] = { ...this.employees[index], ...updates };
+                    this.saveData();
+                }
+            },
+            
+            deleteEmployee(id) {
+                this.employees = this.employees.filter(e => e.id !== id);
+                this.saveData();
             }
         };
 
-        // Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            applyLocalization();
-            attachNavigationHandlers();
-        });
+        // UI Controller
+        const UIController = {
+            init() {
+                this.attachNavigation();
+                this.renderEmployees();
+                document.getElementById('currentUser').textContent = BusinessManager.currentUser?.username || '';
+            },
+            
+            attachNavigation() {
+                document.querySelectorAll('.nav-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+                        document.getElementById(button.dataset.section).classList.remove('hidden');
+                    });
+                });
+            },
+            
+            showModal(title, content) {
+                const modal = document.getElementById('settingsModal');
+                modal.querySelector('h3').textContent = title;
+                modal.querySelector('#modalContent').innerHTML = content;
+                modal.style.display = 'flex';
+            },
+            
+            closeModal() {
+                document.getElementById('settingsModal').style.display = 'none';
+            },
+            
+            renderEmployees() {
+                const tbody = document.getElementById('employeeList');
+                tbody.innerHTML = BusinessManager.employees.map(emp => `
+                    <tr>
+                        <td>${emp.name}</td>
+                        <td>${emp.position}</td>
+                        <td>${emp.salary}</td>
+                        <td>
+                            <button class="action-button edit" onclick="editEmployee(${emp.id})">✏️</button>
+                            <button class="action-button delete" onclick="deleteEmployee(${emp.id})">🗑️</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        };
 
-        // Improved Login Function
+        // Event Handlers
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            const user = SYSTEM_CONFIG.users.find(u => u.username === username && u.password === password);
-            if(user) {
-                SYSTEM_CONFIG.currentUser = user;
+            if (BusinessManager.login(username, password)) {
                 document.getElementById('loginPage').classList.add('hidden');
                 document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = user.username;
-                updateUI();
-                saveData();
+                UIController.init();
             } else {
                 alert('Invalid credentials');
             }
         }
 
-        // Improved Employee Management
         function showEmployeeForm() {
-            showModal('Add Employee', `
+            UIController.showModal('Add Employee', `
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" id="empName" required>
@@ -146,37 +472,18 @@
         }
 
         function saveEmployee() {
-            const newEmployee = {
-                id: Date.now(),
+            BusinessManager.addEmployee({
                 name: document.getElementById('empName').value,
                 position: document.getElementById('empPosition').value,
                 salary: document.getElementById('empSalary').value
-            };
-            SYSTEM_CONFIG.employees.push(newEmployee);
-            renderEmployees();
-            closeModal();
-            saveData();
-        }
-
-        // Improved Rendering
-        function renderEmployees() {
-            const tbody = document.getElementById('employeeList');
-            tbody.innerHTML = SYSTEM_CONFIG.employees.map(emp => `
-                <tr>
-                    <td>${emp.name}</td>
-                    <td>${emp.position}</td>
-                    <td>${SYSTEM_CONFIG.settings.currency} ${emp.salary}</td>
-                    <td>
-                        <button class="action-button edit" onclick="editEmployee(${emp.id})">✏️</button>
-                        <button class="action-button delete" onclick="deleteEmployee(${emp.id})">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
+            });
+            UIController.renderEmployees();
+            UIController.closeModal();
         }
 
         function editEmployee(id) {
-            const employee = SYSTEM_CONFIG.employees.find(e => e.id === id);
-            showModal('Edit Employee', `
+            const employee = BusinessManager.employees.find(e => e.id === id);
+            UIController.showModal('Edit Employee', `
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" id="editName" value="${employee.name}" required>
@@ -194,100 +501,28 @@
         }
 
         function updateEmployee(id) {
-            const employee = SYSTEM_CONFIG.employees.find(e => e.id === id);
-            employee.name = document.getElementById('editName').value;
-            employee.position = document.getElementById('editPosition').value;
-            employee.salary = document.getElementById('editSalary').value;
-            renderEmployees();
-            closeModal();
-            saveData();
+            BusinessManager.updateEmployee(id, {
+                name: document.getElementById('editName').value,
+                position: document.getElementById('editPosition').value,
+                salary: document.getElementById('editSalary').value
+            });
+            UIController.renderEmployees();
+            UIController.closeModal();
         }
 
         function deleteEmployee(id) {
-            SYSTEM_CONFIG.employees = SYSTEM_CONFIG.employees.filter(e => e.id !== id);
-            renderEmployees();
-            saveData();
-        }
-
-        // Improved Settings
-        function showSettingsTab(tabName) {
-            document.querySelectorAll('.settings-tab').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(`${tabName}Settings`).classList.remove('hidden');
-        }
-
-        // Improved Password Management
-        function checkPasswordStrength(password) {
-            const strength = Math.min(Math.floor(password.length / 3), 3);
-            const strengthBar = document.getElementById('passwordStrength');
-            strengthBar.className = ['weak', 'medium', 'strong'][strength - 1] || 'weak';
-            strengthBar.style.width = `${strength * 33}%`;
-        }
-
-        function changePassword() {
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            
-            if (SYSTEM_CONFIG.currentUser.password === currentPassword) {
-                SYSTEM_CONFIG.currentUser.password = newPassword;
-                saveData();
-                alert('Password changed successfully!');
-            } else {
-                alert('Current password is incorrect');
+            if (confirm('Are you sure you want to delete this employee?')) {
+                BusinessManager.deleteEmployee(id);
+                UIController.renderEmployees();
             }
         }
 
-        // Improved Localization
-        function updateLanguage(lang) {
-            SYSTEM_CONFIG.settings.language = lang;
-            applyLocalization();
-            saveData();
-        }
-
-        function updateCurrency(currency) {
-            SYSTEM_CONFIG.settings.currency = currency;
-            updateUI();
-            saveData();
-        }
-
-        // Data Management
-        function saveData() {
-            localStorage.setItem('users', JSON.stringify(SYSTEM_CONFIG.users));
-            localStorage.setItem('employees', JSON.stringify(SYSTEM_CONFIG.employees));
-            localStorage.setItem('inventory', JSON.stringify(SYSTEM_CONFIG.inventory));
-            localStorage.setItem('sales', JSON.stringify(SYSTEM_CONFIG.sales));
-            localStorage.setItem('settings', JSON.stringify(SYSTEM_CONFIG.settings));
-        }
-
-        // Navigation Handling
-        function attachNavigationHandlers() {
-            document.querySelectorAll('.nav-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const sectionId = button.dataset.section;
-                    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-                    document.getElementById(sectionId).classList.remove('hidden');
-                });
-            });
-        }
-
-        // Utility Functions
-        function showModal(title, content) {
-            const modal = document.getElementById('settingsModal');
-            modal.querySelector('#modalTitle').textContent = title;
-            modal.querySelector('#modalContent').innerHTML = content;
-            modal.style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-
-        function updateUI() {
-            renderEmployees();
-            // Add other render functions here
-            document.querySelectorAll('.currency-display').forEach(el => {
-                el.textContent = `${SYSTEM_CONFIG.settings.currency} ${SYSTEM_CONFIG.totalIncome}`;
-            });
-        }
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('users')) {
+                BusinessManager.users = JSON.parse(localStorage.getItem('users'));
+            }
+        });
     </script>
 </body>
 </html>
