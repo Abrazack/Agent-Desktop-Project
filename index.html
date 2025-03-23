@@ -5,59 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background-color: #f3ddb3; }
-        button { padding: 10px 15px; font-size: 16px; margin: 10px; cursor: pointer; }
-        .admin-btn { background-color: #f3a157; color: white; }
+        body { font-family: Arial, sans-serif; text-align: center; background-color: #f3ddb3; margin: 0; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
+        .header { background-color: #2f7366; color: white; padding: 15px; font-size: 24px; }
+        .menu { display: flex; justify-content: center; gap: 15px; padding: 15px; background-color: #f3a157; }
+        .menu button { padding: 10px 15px; font-size: 16px; color: white; border: none; cursor: pointer; }
+        .menu .active { background-color: #0261d9; }
         .hidden { display: none; }
-        table { width: 80%; margin: 20px auto; border-collapse: collapse; }
+        table { width: 80%; margin: 20px auto; border-collapse: collapse; background-color: white; }
         th, td { border: 1px solid black; padding: 10px; text-align: center; }
+        th { background-color: #2f7366; color: white; }
     </style>
 </head>
 <body>
-    <h1>Admin Dashboard</h1>
-    <button class="admin-btn" onclick="showSection('employees')">Manage Employees</button>
-    <button class="admin-btn" onclick="showSection('inventory')">Manage Inventory</button>
-    <button class="admin-btn" onclick="showSection('sales')">View Sales</button>
-    <button class="admin-btn" onclick="showSection('logs')">View Logs</button>
-
-    <!-- Employees Section -->
-    <div id="employees" class="hidden">
-        <h2>Manage Employees</h2>
-        <button onclick="addEmployee()">Add Employee</button>
-        <table>
-            <tr><th>Name</th><th>Role</th><th>Actions</th></tr>
-            <tbody id="employee-list"></tbody>
-        </table>
+    <div class="header">Admin Dashboard</div>
+    <div class="menu">
+        <button onclick="showSection('employees')">Manage Employees</button>
+        <button onclick="showSection('inventory')">Manage Inventory</button>
+        <button onclick="showSection('sales')">View Sales</button>
+        <button onclick="showSection('logs')">View Logs</button>
     </div>
 
-    <!-- Inventory Section -->
-    <div id="inventory" class="hidden">
-        <h2>Manage Inventory</h2>
-        <button onclick="addProduct()">Add Product</button>
-        <table>
-            <tr><th>Product</th><th>Stock</th><th>Price</th><th>Actions</th></tr>
-            <tbody id="inventory-list"></tbody>
-        </table>
-    </div>
+    <div class="container">
+        <div id="employees" class="hidden">
+            <h2>Manage Employees</h2>
+            <button onclick="addEmployee()">Add Employee</button>
+            <table>
+                <tr><th>Name</th><th>Role</th><th>Actions</th></tr>
+                <tbody id="employee-list"></tbody>
+            </table>
+        </div>
 
-    <!-- Sales Section -->
-    <div id="sales" class="hidden">
-        <h2>View Sales</h2>
-        <table>
-            <tr><th>Product</th><th>Quantity</th><th>Total Price</th></tr>
-            <tbody id="sales-list"></tbody>
-        </table>
-    </div>
+        <div id="inventory" class="hidden">
+            <h2>Manage Inventory</h2>
+            <button onclick="addProduct()">Add Product</button>
+            <table>
+                <tr><th>Product</th><th>Stock</th><th>Price</th><th>Actions</th></tr>
+                <tbody id="inventory-list"></tbody>
+            </table>
+        </div>
 
-    <!-- Logs Section -->
-    <div id="logs" class="hidden">
-        <h2>System Logs</h2>
-        <p>No logs available</p>
+        <div id="sales" class="hidden">
+            <h2>View Sales</h2>
+            <button onclick="addSale()">Add Sale</button>
+            <table>
+                <tr><th>Product</th><th>Quantity</th><th>Total Price</th><th>Actions</th></tr>
+                <tbody id="sales-list"></tbody>
+            </table>
+        </div>
+
+        <div id="logs" class="hidden">
+            <h2>System Logs</h2>
+            <button onclick="clearLogs()">Clear Logs</button>
+            <ul id="log-list"></ul>
+        </div>
     </div>
 
     <script>
         function showSection(section) {
-            document.querySelectorAll('div').forEach(div => div.classList.add('hidden'));
+            document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
             document.getElementById(section).classList.remove('hidden');
         }
 
@@ -67,6 +73,7 @@
             if (name && role) {
                 let row = `<tr><td>${name}</td><td>${role}</td><td><button onclick='removeRow(this)'>Remove</button></td></tr>`;
                 document.getElementById("employee-list").innerHTML += row;
+                logActivity(`Added employee: ${name}, Role: ${role}`);
             }
         }
 
@@ -77,11 +84,33 @@
             if (product && stock && price) {
                 let row = `<tr><td>${product}</td><td>${stock}</td><td>${price}</td><td><button onclick='removeRow(this)'>Remove</button></td></tr>`;
                 document.getElementById("inventory-list").innerHTML += row;
+                logActivity(`Added product: ${product}, Stock: ${stock}, Price: ${price}`);
+            }
+        }
+
+        function addSale() {
+            let product = prompt("Enter product name:");
+            let quantity = prompt("Enter quantity sold:");
+            let price = prompt("Enter total price:");
+            if (product && quantity && price) {
+                let row = `<tr><td>${product}</td><td>${quantity}</td><td>${price}</td><td><button onclick='removeRow(this)'>Remove</button></td></tr>`;
+                document.getElementById("sales-list").innerHTML += row;
+                logActivity(`Sale recorded: ${product}, Quantity: ${quantity}, Total Price: ${price}`);
             }
         }
 
         function removeRow(btn) {
             btn.parentElement.parentElement.remove();
+        }
+
+        function logActivity(message) {
+            let logEntry = document.createElement("li");
+            logEntry.innerText = message;
+            document.getElementById("log-list").appendChild(logEntry);
+        }
+
+        function clearLogs() {
+            document.getElementById("log-list").innerHTML = "";
         }
     </script>
 </body>
