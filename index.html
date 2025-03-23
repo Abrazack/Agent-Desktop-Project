@@ -4,9 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent Desktop Project</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #f3ddb3; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; cursor: pointer; }
+        .admin { background-color: #f3a157; color: white; }
+        .employee { background-color: #0261d9; color: white; }
+        .hidden { display: none; }
+        #dashboard { margin-top: 20px; font-size: 18px; color: blue; }
+    </style>
 </head>
 <body>
     <h1>Welcome to Agent Desktop Project</h1>
-    <p>GitHub Pages is now working!</p>
+    <p>Select your role to continue:</p>
+
+    <button class="admin" onclick="openLogin('admin')">Login as Admin</button>
+    <button class="employee" onclick="openLogin('employee')">Login as Employee</button>
+
+    <div id="loginBox" class="hidden">
+        <h2 id="loginTitle"></h2>
+        <input type="text" id="username" placeholder="Username"><br><br>
+        <input type="password" id="password" placeholder="Password"><br><br>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="dashboard" class="hidden">
+        <h2 id="welcomeMessage"></h2>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        let users = {
+            "admin": { "password": "admin123", "role": "admin" },
+            "employee1": { "password": "emp123", "role": "employee" }
+        };
+
+        let currentRole = "";
+
+        function openLogin(role) {
+            currentRole = role;
+            document.getElementById("loginTitle").innerText = `Login as ${role}`;
+            document.getElementById("loginBox").classList.remove("hidden");
+        }
+
+        function login() {
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            if (users[username] && users[username].password === password && users[username].role === currentRole) {
+                document.getElementById("loginBox").classList.add("hidden");
+                document.getElementById("dashboard").classList.remove("hidden");
+                document.getElementById("welcomeMessage").innerText = `Welcome, ${username} (${currentRole})`;
+            } else {
+                alert("Invalid credentials! Please try again.");
+            }
+        }
+
+        function logout() {
+            document.getElementById("dashboard").classList.add("hidden");
+            document.getElementById("loginBox").classList.add("hidden");
+        }
+    </script>
 </body>
 </html>
