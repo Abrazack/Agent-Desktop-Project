@@ -26,6 +26,8 @@
         <button onclick="showSection('employees')">Manage Employees</button>
         <button onclick="showSection('inventory')">Manage Inventory</button>
         <button onclick="showSection('sales')">View Sales</button>
+        <button onclick="showSection('customers')">Manage Customers</button>
+        <button onclick="showSection('reports')">Financial Reports</button>
         <button onclick="showSection('logs')">View Logs</button>
     </div>
 
@@ -57,6 +59,22 @@
             </table>
         </div>
 
+        <div id="customers" class="hidden">
+            <h2>Manage Customers</h2>
+            <button onclick="addCustomer()">Add Customer</button>
+            <table>
+                <tr><th>Name</th><th>Email</th><th>Actions</th></tr>
+                <tbody id="customer-list"></tbody>
+            </table>
+        </div>
+
+        <div id="reports" class="hidden">
+            <h2>Financial Reports</h2>
+            <p>View revenue, expenses, and profits.</p>
+            <button onclick="generateReport()">Generate Report</button>
+            <p id="report-output"></p>
+        </div>
+
         <div id="logs" class="hidden">
             <h2>System Logs</h2>
             <button onclick="clearLogs()">Clear Logs</button>
@@ -79,7 +97,6 @@
                             <button class='action-btn delete' onclick='removeRow(this)'>Remove</button>
                           </td></tr>`;
                 document.getElementById("employee-list").innerHTML += row;
-                logActivity(`Added employee: ${name}, Role: ${role}`);
             }
         }
 
@@ -93,7 +110,6 @@
                             <button class='action-btn delete' onclick='removeRow(this)'>Remove</button>
                           </td></tr>`;
                 document.getElementById("inventory-list").innerHTML += row;
-                logActivity(`Added product: ${product}, Stock: ${stock}, Price: ${price}`);
             }
         }
 
@@ -106,32 +122,26 @@
                             <button class='action-btn delete' onclick='removeRow(this)'>Remove</button>
                           </td></tr>`;
                 document.getElementById("sales-list").innerHTML += row;
-                logActivity(`Sale recorded: ${product}, Quantity: ${quantity}, Total Price: ${price}`);
             }
+        }
+
+        function addCustomer() {
+            let name = prompt("Enter customer name:");
+            let email = prompt("Enter email:");
+            if (name && email) {
+                let row = `<tr><td>${name}</td><td>${email}</td><td>
+                            <button class='action-btn delete' onclick='removeRow(this)'>Remove</button>
+                          </td></tr>`;
+                document.getElementById("customer-list").innerHTML += row;
+            }
+        }
+
+        function generateReport() {
+            document.getElementById("report-output").innerText = "Total revenue: $5000 | Expenses: $2000 | Profit: $3000";
         }
 
         function removeRow(btn) {
             btn.parentElement.parentElement.remove();
-        }
-
-        function editRow(btn) {
-            let row = btn.parentElement.parentElement;
-            let cells = row.getElementsByTagName("td");
-            let newValue = prompt("Edit value:", cells[0].innerText);
-            if (newValue) {
-                cells[0].innerText = newValue;
-                logActivity(`Edited entry: ${newValue}`);
-            }
-        }
-
-        function logActivity(message) {
-            let logEntry = document.createElement("li");
-            logEntry.innerText = message;
-            document.getElementById("log-list").appendChild(logEntry);
-        }
-
-        function clearLogs() {
-            document.getElementById("log-list").innerHTML = "";
         }
     </script>
 </body>
