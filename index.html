@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-language="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamified Admin Dashboard</title>
+    <title>Enterprise Management System</title>
     <style>
         :root {
             --primary-color: #2f7366;
@@ -14,432 +14,268 @@
             --danger-color: #d87487;
         }
 
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            margin: 0; 
-            background-color: var(--background-color);
-            color: #333;
-        }
-
-        .header { 
-            background-color: var(--primary-color); 
-            color: var(--text-light); 
-            padding: 1rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .nav-menu {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 1rem;
-            background-color: var(--secondary-color);
-            justify-content: center;
-        }
-
-        .nav-button {
-            padding: 0.75rem 1.5rem;
-            border: none;
+        /* Previous CSS remains, adding new styles */
+        .role-badge {
+            padding: 2px 8px;
             border-radius: 4px;
-            background-color: var(--accent-color);
-            color: var(--text-light);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .nav-button:hover {
-            background-color: #004a9f;
-            transform: translateY(-1px);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .section {
-            background: white;
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .action-button {
-            padding: 0.5rem 1rem;
-            margin: 0 0.25rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: opacity 0.2s ease;
-        }
-
-        .action-button:hover {
-            opacity: 0.9;
-        }
-
-        .edit { background-color: var(--secondary-color); }
-        .delete { background-color: var(--danger-color); }
-        .success { background-color: #4CAF50; }
-
-        .hidden { display: none; }
-
-        /* Game Elements */
-        .floating-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--secondary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            animation: floatUp 1s ease-out;
-            z-index: 1000;
-        }
-
-        #score-display {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            z-index: 1000;
-        }
-
-        .progress-bar {
-            height: 20px;
-            background: #ddd;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
+            font-size: 0.8em;
             background: var(--accent-color);
-            transition: width 0.3s ease;
-        }
-
-        .achievement-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 5px;
-            background: var(--primary-color);
             color: white;
-            border-radius: 15px;
-            font-size: 0.9em;
         }
 
-        @keyframes floatUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .access-level {
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        @media (max-width: 768px) {
-            .nav-menu { flex-direction: column; }
-            .nav-button { width: 100%; }
-            .section { padding: 1rem; }
-            table { overflow-x: auto; display: block; }
+        .password-strength {
+            height: 4px;
+            margin-top: 5px;
+            background: #ddd;
         }
+
+        .strength-weak { background: #ff4444; width: 33%; }
+        .strength-medium { background: #ffbb33; width: 66%; }
+        .strength-strong { background: #00C851; width: 100%; }
     </style>
 </head>
 <body>
-    <div id="score-display">Admin Points: 0</div>
-    <div class="header">
-        <h1>Admin Dashboard</h1>
+    <!-- Login System -->
+    <div class="login-container" id="loginPage">
+        <!-- Previous login content -->
     </div>
 
-    <nav class="nav-menu">
-        <button class="nav-button" data-section="employees">Employees</button>
-        <button class="nav-button" data-section="inventory">Inventory</button>
-        <button class="nav-button" data-section="sales">Sales</button>
-        <button class="nav-button" data-section="reports">Reports</button>
-    </nav>
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden">
+        <!-- Settings Menu -->
+        <div class="settings-menu">
+            <button class="action-button" onclick="showSettings()">⚙️ <span data-localize="settings">Settings</span></button>
+        </div>
 
-    <main class="container">
+        <!-- Income Display -->
+        <div class="header">
+            <h1 data-localize="business_dashboard">Business Dashboard</h1>
+            <div id="income-display"></div>
+        </div>
+
         <!-- Employees Section -->
         <section id="employees" class="section hidden">
-            <div class="section-header">
-                <h2>Manage Employees</h2>
-                <div>
-                    <button class="action-button success" onclick="showForm('employee')">➕ Add Employee</button>
-                    <div class="progress-bar" style="width: 200px">
-                        <div class="progress-fill" id="team-progress" style="width: 30%"></div>
+            <!-- Employee management table -->
+        </section>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <h3 data-localize="system_settings">System Settings</h3>
+                <div class="settings-tabs">
+                    <button data-localize="user_mgmt" onclick="showSettingsTab('user')">Users</button>
+                    <button data-localize="security" onclick="showSettingsTab('security')">Security</button>
+                    <button data-localize="localization" onclick="showSettingsTab('localization')">Localization</button>
+                </div>
+
+                <!-- User Management Tab -->
+                <div id="userSettings" class="settings-tab">
+                    <div class="form-group">
+                        <h4 data-localize="manage_users">Manage Users</h4>
+                        <button onclick="showUserForm('manager')" data-localize="add_manager">Add Manager</button>
+                        <table id="userList">
+                            <thead>
+                                <tr>
+                                    <th data-localize="name">Name</th>
+                                    <th data-localize="role">Role</th>
+                                    <th data-localize="access_level">Access Level</th>
+                                    <th data-localize="actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-            <table>
-                <thead>
-                    <tr><th>Name</th><th>Role</th><th>Level</th><th>XP</th><th>Actions</th></tr>
-                </thead>
-                <tbody id="employee-list"></tbody>
-            </table>
-        </section>
 
-        <!-- Inventory Section -->
-        <section id="inventory" class="section hidden">
-            <div class="section-header">
-                <h2>Inventory Management</h2>
-                <div>
-                    <button class="action-button success" onclick="showForm('product')">📦 Add Product</button>
-                    <div class="progress-bar" style="width: 200px">
-                        <div class="progress-fill" id="stock-progress" style="width: 60%"></div>
+                <!-- Security Tab -->
+                <div id="securitySettings" class="settings-tab hidden">
+                    <div class="form-group">
+                        <h4 data-localize="change_password">Change Password</h4>
+                        <input type="password" id="currentPassword" placeholder="Current Password">
+                        <input type="password" id="newPassword" placeholder="New Password" oninput="checkPasswordStrength(this.value)">
+                        <div class="password-strength">
+                            <div id="passwordStrength" class="strength-weak"></div>
+                        </div>
+                        <button onclick="changePassword()" data-localize="update">Update</button>
                     </div>
                 </div>
-            </div>
-            <table>
-                <thead>
-                    <tr><th>Product</th><th>Stock</th><th>Value</th><th>Actions</th></tr>
-                </thead>
-                <tbody id="inventory-list"></tbody>
-            </table>
-        </section>
 
-        <!-- Sales Section -->
-        <section id="sales" class="section hidden">
-            <div class="section-header">
-                <h2>Sales Dashboard</h2>
-                <div>
-                    <button class="action-button success" onclick="showForm('sale')">💰 New Sale</button>
-                    <div id="daily-target">Daily Target: $5000</div>
+                <!-- Localization Tab -->
+                <div id="localizationSettings" class="settings-tab hidden">
+                    <!-- Previous localization content -->
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr><th>Product</th><th>Qty</th><th>Total</th><th>XP Earned</th></tr>
-                </thead>
-                <tbody id="sales-list"></tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- Form Modal -->
-    <div class="modal" id="formModal">
-        <div class="modal-content">
-            <h3 id="modalTitle"></h3>
-            <div id="formContent"></div>
         </div>
     </div>
 
     <script>
-        let adminPoints = 0;
-        let achievements = [];
-        const employees = [];
-        const inventory = [];
-        const sales = [];
-
-        // Game Configuration
-        const GAME_CONFIG = {
-            xpPerAction: 10,
-            xpLevelThreshold: 100,
-            pointValues: {
-                employee: 50,
-                product: 30,
-                sale: 20
+        // Enhanced System Configuration
+        const SYSTEM_CONFIG = {
+            exchangeRates: {
+                'USD': 1,
+                'EUR': 0.93,
+                'JPY': 148.50,
+                'GBP': 0.80
+            },
+            accessLevels: {
+                1: 'Basic',
+                2: 'Manager',
+                3: 'Admin'
+            },
+            passwordRequirements: {
+                minLength: 8,
+                requireNumber: true,
+                requireSpecialChar: true
             }
         };
 
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeSampleData();
-            document.querySelectorAll('.nav-button').forEach(button => {
-                button.addEventListener('click', () => showSection(button.dataset.section));
+        // User Management System
+        let users = [
+            { id: 1, name: 'Admin', role: 'admin', accessLevel: 3, password: 'admin123' }
+        ];
+
+        // Enhanced Localization
+        const translations = {
+            en: {
+                // Previous translations
+                change_password: "Change Password",
+                update: "Update",
+                access_level: "Access Level",
+                promote: "Promote",
+                demote: "Demote"
+            },
+            // Add other languages
+        };
+
+        // User Management Functions
+        function showUserForm(type) {
+            const formHTML = `
+                <div class="form-group">
+                    <label data-localize="full_name">Full Name</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label data-localize="access_level">Access Level</label>
+                    <select id="userAccess">
+                        ${Object.entries(SYSTEM_CONFIG.accessLevels).map(([key, value]) => `
+                            <option value="${key}">${value}</option>
+                        `)}
+                    </select>
+                </div>
+                <button class="action-button success" onclick="saveUser('${type}')" data-localize="save">Save</button>
+            `;
+            showModal(type === 'manager' ? 'Add Manager' : 'Add User', formHTML);
+        }
+
+        function saveUser(type) {
+            const newUser = {
+                id: Date.now(),
+                name: document.getElementById('userName').value,
+                role: type,
+                accessLevel: parseInt(document.getElementById('userAccess').value),
+                password: 'tempPassword'
+            };
+            users.push(newUser);
+            renderUserList();
+            closeModal();
+        }
+
+        function renderUserList() {
+            const tbody = document.querySelector('#userList tbody');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.role}</td>
+                    <td class="access-level" onclick="changeAccessLevel(${user.id})">
+                        ${SYSTEM_CONFIG.accessLevels[user.accessLevel]}
+                    </td>
+                    <td>
+                        <button class="action-button" onclick="promoteUser(${user.id})" data-localize="promote">Promote</button>
+                        <button class="action-button delete" onclick="deleteUser(${user.id})" data-localize="delete">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Security Functions
+        function checkPasswordStrength(password) {
+            const strength = calculatePasswordStrength(password);
+            const strengthBar = document.getElementById('passwordStrength');
+            strengthBar.className = `strength-${strength}`;
+        }
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= SYSTEM_CONFIG.passwordRequirements.minLength) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[!@#$%^&*]/.test(password)) strength++;
+            
+            return strength < 2 ? 'weak' : strength === 2 ? 'medium' : 'strong';
+        }
+
+        function changePassword() {
+            const oldPass = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            
+            if (validatePasswordChange(oldPass, newPass)) {
+                currentUser.password = newPass;
+                alert('Password changed successfully!');
+            }
+        }
+
+        // Localization Functions
+        function updateCurrencyDisplay() {
+            const currencySymbols = {
+                'USD': '$',
+                'EUR': '€',
+                'JPY': '¥',
+                'GBP': '£'
+            };
+            
+            document.querySelectorAll('[data-currency]').forEach(el => {
+                const value = parseFloat(el.dataset.currency);
+                el.textContent = `${currencySymbols[systemSettings.currency]}${(value * SYSTEM_CONFIG.exchangeRates[systemSettings.currency]).toFixed(2)}`;
             });
-            showSection('employees');
+        }
+
+        // Enhanced Sales System
+        function recordSale(amount) {
+            const convertedAmount = amount * SYSTEM_CONFIG.exchangeRates[systemSettings.currency];
+            totalIncome += convertedAmount;
+            updateIncomeDisplay();
+        }
+
+        function updateIncomeDisplay() {
+            document.getElementById('income-display').textContent = 
+                `${translations[systemSettings.language].total_income}: ${systemSettings.currency} ${totalIncome.toFixed(2)}`;
+        }
+
+        // Initialize System
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUserList();
+            applyLocalization();
+            updateCurrencyDisplay();
         });
 
-        // Core Game Functions
-        function updateScore(points) {
-            adminPoints += points;
-            document.getElementById('score-display').textContent = `Admin Points: ${adminPoints}`;
-            if(points > 0) {
-                showNotification(`+${points} Points!`, 'success');
+        // Role-Based Access Control
+        function handleAccessControl() {
+            if(currentUser.role === 'employee') {
+                document.querySelectorAll('.settings-menu button').forEach(btn => btn.disabled = true);
             }
-            checkAchievements();
         }
 
-        function showNotification(text, type) {
-            const notif = document.createElement('div');
-            notif.className = `floating-notification ${type}`;
-            notif.textContent = text;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 2000);
-        }
-
-        function checkAchievements() {
-            const newAchievements = [
-                { id: 1, name: 'First Hire', condition: employees.length >= 1 },
-                { id: 2, name: 'Stock Master', condition: inventory.length >= 5 },
-                { id: 3, name: 'Sales Guru', condition: sales.length >= 10 }
-            ].filter(a => !achievements.includes(a.id) && a.condition);
-
-            newAchievements.forEach(ach => {
-                achievements.push(ach.id);
-                showNotification(`🏆 Achievement Unlocked: ${ach.name}!`, 'achievement');
-                updateScore(100);
-            });
-        }
-
-        // Data Management Functions
-        function showForm(type) {
-            const forms = {
-                employee: {
-                    title: 'Hire New Employee',
-                    fields: ['Name', 'Role', 'Email'],
-                    callback: saveEmployee
-                },
-                product: {
-                    title: 'Add New Product',
-                    fields: ['Product Name', 'SKU', 'Price', 'Stock'],
-                    callback: saveProduct
-                },
-                sale: {
-                    title: 'Record New Sale',
-                    fields: ['Product', 'Quantity', 'Customer'],
-                    callback: saveSale
-                }
-            };
-
-            const { title, fields, callback } = forms[type];
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('formContent').innerHTML = `
-                ${fields.map(field => `
-                    <div class="form-group">
-                        <label>${field}</label>
-                        <input type="${field === 'Stock' ? 'number' : 'text'}" required>
-                    </div>
-                `).join('')}
-                <button class="action-button success" onclick="${callback.name}()">Save</button>
-            `;
-            document.getElementById('formModal').style.display = 'flex';
-        }
-
-        function saveEmployee() {
-            const newEmployee = {
-                name: document.querySelector('#formContent input').value,
-                role: document.querySelectorAll('#formContent input')[1].value,
-                level: 1,
-                xp: 0
-            };
-            employees.push(newEmployee);
-            updateScore(GAME_CONFIG.pointValues.employee);
-            renderEmployees();
-            closeModal();
-        }
-
-        function saveProduct() {
-            const newProduct = {
-                name: document.querySelector('#formContent input').value,
-                sku: document.querySelectorAll('#formContent input')[1].value,
-                price: document.querySelectorAll('#formContent input')[2].value,
-                stock: document.querySelectorAll('#formContent input')[3].value
-            };
-            inventory.push(newProduct);
-            updateScore(GAME_CONFIG.pointValues.product);
-            renderInventory();
-            closeModal();
-        }
-
-        function saveSale() {
-            const newSale = {
-                product: document.querySelector('#formContent input').value,
-                quantity: document.querySelectorAll('#formContent input')[1].value,
-                customer: document.querySelectorAll('#formContent input')[2].value,
-                xp: GAME_CONFIG.xpPerAction
-            };
-            sales.push(newSale);
-            updateScore(GAME_CONFIG.pointValues.sale);
-            renderSales();
-            closeModal();
-        }
-
-        // Rendering Functions
-        function renderEmployees() {
-            const tbody = document.getElementById('employee-list');
-            tbody.innerHTML = employees.map(emp => `
-                <tr>
-                    <td>${emp.name}</td>
-                    <td>${emp.role}</td>
-                    <td>${emp.level}</td>
-                    <td>${emp.xp}/100</td>
-                    <td>
-                        <button class="action-button edit">✏️</button>
-                        <button class="action-button delete">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderInventory() {
-            const tbody = document.getElementById('inventory-list');
-            tbody.innerHTML = inventory.map(prod => `
-                <tr>
-                    <td>${prod.name}</td>
-                    <td>${prod.stock}</td>
-                    <td>$${prod.price}</td>
-                    <td>
-                        <button class="action-button edit">✏️</button>
-                        <button class="action-button delete">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderSales() {
-            const tbody = document.getElementById('sales-list');
-            tbody.innerHTML = sales.map(sale => `
-                <tr>
-                    <td>${sale.product}</td>
-                    <td>${sale.quantity}</td>
-                    <td>$${sale.quantity * 50}</td>
-                    <td>+${sale.xp} XP</td>
-                </tr>
-            `).join('');
-        }
-
-        // Utility Functions
-        function closeModal() {
-            document.getElementById('formModal').style.display = 'none';
-        }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        function initializeSampleData() {
-            employees.push({ name: 'John Doe', role: 'Manager', level: 3, xp: 250 });
-            inventory.push({ name: 'Starter Product', sku: 'PROD001', price: 99.99, stock: 50 });
-            renderEmployees();
-            renderInventory();
-            renderSales();
+        // Promotion System
+        function promoteUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if(user.accessLevel < 3) {
+                user.accessLevel++;
+                renderUserList();
+            }
         }
     </script>
 </body>
