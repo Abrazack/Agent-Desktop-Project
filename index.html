@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-language="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamified Business Manager</title>
+    <title>Gamified Admin Dashboard</title>
     <style>
         :root {
             --primary-color: #2f7366;
@@ -21,26 +21,6 @@
             color: #333;
         }
 
-        /* Login System */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-box {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            transition: transform 0.3s ease;
-        }
-
-        /* Header & Navigation */
         .header { 
             background-color: var(--primary-color); 
             color: var(--text-light); 
@@ -67,7 +47,11 @@
             transition: all 0.2s ease;
         }
 
-        /* Main Content */
+        .nav-button:hover {
+            background-color: #004a9f;
+            transform: translateY(-1px);
+        }
+
         .container {
             max-width: 1400px;
             margin: 2rem auto;
@@ -89,7 +73,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -108,24 +91,24 @@
             font-weight: 600;
         }
 
-        /* Buttons & Interactions */
         .action-button {
             padding: 0.5rem 1rem;
             margin: 0 0.25rem;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: opacity 0.2s ease;
         }
 
         .action-button:hover {
-            transform: scale(1.05);
-            filter: brightness(110%);
+            opacity: 0.9;
         }
 
         .edit { background-color: var(--secondary-color); }
         .delete { background-color: var(--danger-color); }
         .success { background-color: #4CAF50; }
+
+        .hidden { display: none; }
 
         /* Game Elements */
         .floating-notification {
@@ -134,10 +117,9 @@
             right: 20px;
             background: var(--secondary-color);
             color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            animation: slideIn 0.3s ease-out, fadeOut 3s forwards;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+            border-radius: 4px;
+            animation: floatUp 1s ease-out;
             z-index: 1000;
         }
 
@@ -152,201 +134,163 @@
             z-index: 1000;
         }
 
-        .progress-container {
-            background: #eee;
-            border-radius: 10px;
+        .progress-bar {
             height: 20px;
-            margin: 1rem 0;
+            background: #ddd;
+            border-radius: 10px;
             overflow: hidden;
-            position: relative;
         }
 
-        .progress-bar {
+        .progress-fill {
             height: 100%;
             background: var(--accent-color);
-            transition: width 0.5s ease;
+            transition: width 0.3s ease;
         }
 
         .achievement-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
             background: var(--primary-color);
             color: white;
-            padding: 8px 15px;
             border-radius: 15px;
-            margin: 5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            animation: popIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            font-size: 0.9em;
         }
 
-        /* Animations */
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+        @keyframes floatUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            90% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
             .nav-menu { flex-direction: column; }
             .nav-button { width: 100%; }
             .section { padding: 1rem; }
             table { overflow-x: auto; display: block; }
-            th, td { padding: 0.75rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Login System -->
-    <div class="login-container" id="loginPage">
-        <div class="login-box">
-            <h2>🎮 Business Manager Pro</h2>
-            <form id="loginForm" onsubmit="event.preventDefault(); login()">
-                <div class="form-group">
-                    <label>👤 Username</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label>🔑 Password</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button class="action-button success">🚀 Login</button>
-            </form>
-        </div>
+    <div id="score-display">Admin Points: 0</div>
+    <div class="header">
+        <h1>Admin Dashboard</h1>
     </div>
 
-    <!-- Main Dashboard -->
-    <div id="dashboard" class="hidden">
-        <div id="score-display">Admin Points: 0</div>
-        <div class="header">
-            <h1>🏆 Business Dashboard</h1>
-        </div>
+    <nav class="nav-menu">
+        <button class="nav-button" data-section="employees">Employees</button>
+        <button class="nav-button" data-section="inventory">Inventory</button>
+        <button class="nav-button" data-section="sales">Sales</button>
+        <button class="nav-button" data-section="reports">Reports</button>
+    </nav>
 
-        <nav class="nav-menu">
-            <button class="nav-button" data-section="employees">Employees</button>
-            <button class="nav-button" data-section="inventory">Inventory</button>
-            <button class="nav-button" data-section="sales">Sales</button>
-            <button class="nav-button" data-section="reports">Reports</button>
-        </nav>
-
-        <main class="container">
-            <!-- Employees Section -->
-            <section id="employees" class="section">
-                <div class="section-header">
-                    <h2>Manage Employees</h2>
-                    <div>
-                        <button class="action-button success" onclick="showForm('employee')">➕ Add Employee</button>
-                        <div class="progress-container">
-                            <div class="progress-bar" id="team-progress" style="width: 30%"></div>
-                        </div>
+    <main class="container">
+        <!-- Employees Section -->
+        <section id="employees" class="section hidden">
+            <div class="section-header">
+                <h2>Manage Employees</h2>
+                <div>
+                    <button class="action-button success" onclick="showForm('employee')">➕ Add Employee</button>
+                    <div class="progress-bar" style="width: 200px">
+                        <div class="progress-fill" id="team-progress" style="width: 30%"></div>
                     </div>
                 </div>
-                <table>
-                    <thead>
-                        <tr><th>Name</th><th>Role</th><th>Level</th><th>XP</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="employee-list"></tbody>
-                </table>
-            </section>
-
-            <!-- Inventory Section -->
-            <section id="inventory" class="section hidden">
-                <div class="section-header">
-                    <h2>Inventory Management</h2>
-                    <div>
-                        <button class="action-button success" onclick="showForm('product')">📦 Add Product</button>
-                        <div class="progress-container">
-                            <div class="progress-bar" id="stock-progress" style="width: 60%"></div>
-                        </div>
-                    </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr><th>Product</th><th>Stock</th><th>Value</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="inventory-list"></tbody>
-                </table>
-            </section>
-
-            <!-- Sales Section -->
-            <section id="sales" class="section hidden">
-                <div class="section-header">
-                    <h2>Sales Dashboard</h2>
-                    <div>
-                        <button class="action-button success" onclick="showForm('sale')">💰 New Sale</button>
-                        <div id="daily-target">Daily Target: $5000</div>
-                    </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr><th>Product</th><th>Qty</th><th>Total</th><th>XP Earned</th></tr>
-                    </thead>
-                    <tbody id="sales-list"></tbody>
-                </table>
-            </section>
-        </main>
-
-        <!-- Modals -->
-        <div class="modal" id="formModal">
-            <div class="modal-content">
-                <h3 id="modalTitle"></h3>
-                <div id="formContent"></div>
             </div>
+            <table>
+                <thead>
+                    <tr><th>Name</th><th>Role</th><th>Level</th><th>XP</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="employee-list"></tbody>
+            </table>
+        </section>
+
+        <!-- Inventory Section -->
+        <section id="inventory" class="section hidden">
+            <div class="section-header">
+                <h2>Inventory Management</h2>
+                <div>
+                    <button class="action-button success" onclick="showForm('product')">📦 Add Product</button>
+                    <div class="progress-bar" style="width: 200px">
+                        <div class="progress-fill" id="stock-progress" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Product</th><th>Stock</th><th>Value</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="inventory-list"></tbody>
+            </table>
+        </section>
+
+        <!-- Sales Section -->
+        <section id="sales" class="section hidden">
+            <div class="section-header">
+                <h2>Sales Dashboard</h2>
+                <div>
+                    <button class="action-button success" onclick="showForm('sale')">💰 New Sale</button>
+                    <div id="daily-target">Daily Target: $5000</div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Product</th><th>Qty</th><th>Total</th><th>XP Earned</th></tr>
+                </thead>
+                <tbody id="sales-list"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Form Modal -->
+    <div class="modal" id="formModal">
+        <div class="modal-content">
+            <h3 id="modalTitle"></h3>
+            <div id="formContent"></div>
         </div>
-        <div id="notifications"></div>
     </div>
 
     <script>
+        let adminPoints = 0;
+        let achievements = [];
+        const employees = [];
+        const inventory = [];
+        const sales = [];
+
         // Game Configuration
         const GAME_CONFIG = {
             xpPerAction: 10,
             xpLevelThreshold: 100,
-            pointValues: { employee: 50, product: 30, sale: 20 },
-            exchangeRates: { USD: 1, EUR: 0.93, JPY: 148.5 }
+            pointValues: {
+                employee: 50,
+                product: 30,
+                sale: 20
+            }
         };
 
-        let adminPoints = 0;
-        let achievements = [];
-        let employees = [];
-        let inventory = [];
-        let sales = [];
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSampleData();
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', () => showSection(button.dataset.section));
+            });
+            showSection('employees');
+        });
 
-        // Game Functions
+        // Core Game Functions
         function updateScore(points) {
             adminPoints += points;
             document.getElementById('score-display').textContent = `Admin Points: ${adminPoints}`;
-            if(points > 0) showNotification(`+${points} Points!`, 'success');
+            if(points > 0) {
+                showNotification(`+${points} Points!`, 'success');
+            }
             checkAchievements();
         }
 
-        function showNotification(text, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `floating-notification ${type}`;
-            notification.innerHTML = `
-                <span class="emoji">${getNotificationEmoji(type)}</span>
-                ${text}
-            `;
-            document.getElementById('notifications').appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
-        }
-
-        function getNotificationEmoji(type) {
-            const emojis = {
-                success: '🎉', achievement: '🏆', warning: '⚠️', 
-                error: '❌', info: 'ℹ️'
-            };
-            return emojis[type] || '✨';
+        function showNotification(text, type) {
+            const notif = document.createElement('div');
+            notif.className = `floating-notification ${type}`;
+            notif.textContent = text;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
         }
 
         function checkAchievements() {
@@ -363,7 +307,7 @@
             });
         }
 
-        // Data Management
+        // Data Management Functions
         function showForm(type) {
             const forms = {
                 employee: {
@@ -385,30 +329,58 @@
 
             const { title, fields, callback } = forms[type];
             document.getElementById('modalTitle').textContent = title;
-            document.getElementById('formContent').innerHTML = fields.map(field => `
-                <div class="form-group">
-                    <label>${field}</label>
-                    <input type="${field === 'Stock' ? 'number' : 'text'}" required>
-                </div>
-            `).join('') + `<button class="action-button success" onclick="${callback.name}()">Save</button>`;
+            document.getElementById('formContent').innerHTML = `
+                ${fields.map(field => `
+                    <div class="form-group">
+                        <label>${field}</label>
+                        <input type="${field === 'Stock' ? 'number' : 'text'}" required>
+                    </div>
+                `).join('')}
+                <button class="action-button success" onclick="${callback.name}()">Save</button>
+            `;
             document.getElementById('formModal').style.display = 'flex';
         }
 
         function saveEmployee() {
-            const inputs = document.querySelectorAll('#formContent input');
-            employees.push({
-                name: inputs[0].value,
-                role: inputs[1].value,
-                email: inputs[2].value,
+            const newEmployee = {
+                name: document.querySelector('#formContent input').value,
+                role: document.querySelectorAll('#formContent input')[1].value,
                 level: 1,
                 xp: 0
-            });
+            };
+            employees.push(newEmployee);
             updateScore(GAME_CONFIG.pointValues.employee);
             renderEmployees();
             closeModal();
         }
 
-        // Render Functions
+        function saveProduct() {
+            const newProduct = {
+                name: document.querySelector('#formContent input').value,
+                sku: document.querySelectorAll('#formContent input')[1].value,
+                price: document.querySelectorAll('#formContent input')[2].value,
+                stock: document.querySelectorAll('#formContent input')[3].value
+            };
+            inventory.push(newProduct);
+            updateScore(GAME_CONFIG.pointValues.product);
+            renderInventory();
+            closeModal();
+        }
+
+        function saveSale() {
+            const newSale = {
+                product: document.querySelector('#formContent input').value,
+                quantity: document.querySelectorAll('#formContent input')[1].value,
+                customer: document.querySelectorAll('#formContent input')[2].value,
+                xp: GAME_CONFIG.xpPerAction
+            };
+            sales.push(newSale);
+            updateScore(GAME_CONFIG.pointValues.sale);
+            renderSales();
+            closeModal();
+        }
+
+        // Rendering Functions
         function renderEmployees() {
             const tbody = document.getElementById('employee-list');
             tbody.innerHTML = employees.map(emp => `
@@ -425,16 +397,50 @@
             `).join('');
         }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.nav-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-                    document.getElementById(button.dataset.section).classList.remove('hidden');
-                });
-            });
-            showSection('employees');
-        });
+        function renderInventory() {
+            const tbody = document.getElementById('inventory-list');
+            tbody.innerHTML = inventory.map(prod => `
+                <tr>
+                    <td>${prod.name}</td>
+                    <td>${prod.stock}</td>
+                    <td>$${prod.price}</td>
+                    <td>
+                        <button class="action-button edit">✏️</button>
+                        <button class="action-button delete">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSales() {
+            const tbody = document.getElementById('sales-list');
+            tbody.innerHTML = sales.map(sale => `
+                <tr>
+                    <td>${sale.product}</td>
+                    <td>${sale.quantity}</td>
+                    <td>$${sale.quantity * 50}</td>
+                    <td>+${sale.xp} XP</td>
+                </tr>
+            `).join('');
+        }
+
+        // Utility Functions
+        function closeModal() {
+            document.getElementById('formModal').style.display = 'none';
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        function initializeSampleData() {
+            employees.push({ name: 'John Doe', role: 'Manager', level: 3, xp: 250 });
+            inventory.push({ name: 'Starter Product', sku: 'PROD001', price: 99.99, stock: 50 });
+            renderEmployees();
+            renderInventory();
+            renderSales();
+        }
     </script>
 </body>
 </html>
