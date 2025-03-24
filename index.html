@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-language="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamified Admin Dashboard</title>
+    <title>Business Management Pro</title>
     <style>
         :root {
             --primary-color: #2f7366;
@@ -21,11 +21,30 @@
             color: #333;
         }
 
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--background-color);
+        }
+
+        .login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
         .header { 
             background-color: var(--primary-color); 
             color: var(--text-light); 
             padding: 1rem;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .nav-menu {
@@ -66,13 +85,6 @@
             margin-bottom: 2rem;
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -108,339 +120,393 @@
         .delete { background-color: var(--danger-color); }
         .success { background-color: #4CAF50; }
 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
         .hidden { display: none; }
 
-        /* Game Elements */
-        .floating-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--secondary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            animation: floatUp 1s ease-out;
-            z-index: 1000;
-        }
-
-        #score-display {
+        .settings-menu {
             position: fixed;
             top: 20px;
-            right: 20px;
-            background: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
+            left: 20px;
             z-index: 1000;
         }
 
-        .progress-bar {
-            height: 20px;
+        .password-strength {
+            height: 4px;
+            margin-top: 5px;
             background: #ddd;
-            border-radius: 10px;
-            overflow: hidden;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--accent-color);
-            transition: width 0.3s ease;
-        }
+        .strength-weak { background: #ff4444; width: 33%; }
+        .strength-medium { background: #ffbb33; width: 66%; }
+        .strength-strong { background: #00C851; width: 100%; }
 
-        .achievement-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 5px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 15px;
-            font-size: 0.9em;
-        }
-
-        @keyframes floatUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @media (max-width: 768px) {
-            .nav-menu { flex-direction: column; }
-            .nav-button { width: 100%; }
-            .section { padding: 1rem; }
-            table { overflow-x: auto; display: block; }
+        .currency-display::before {
+            content: attr(data-currency);
+            margin-right: 5px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div id="score-display">Admin Points: 0</div>
-    <div class="header">
-        <h1>Admin Dashboard</h1>
+    <!-- Login System -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <h2 data-localize="welcome">Business Management Pro</h2>
+            <form id="loginForm" onsubmit="event.preventDefault(); login()">
+                <div class="form-group">
+                    <label data-localize="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label data-localize="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button class="action-button success" data-localize="login">Login</button>
+            </form>
+        </div>
     </div>
 
-    <nav class="nav-menu">
-        <button class="nav-button" data-section="employees">Employees</button>
-        <button class="nav-button" data-section="inventory">Inventory</button>
-        <button class="nav-button" data-section="sales">Sales</button>
-        <button class="nav-button" data-section="reports">Reports</button>
-    </nav>
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden">
+        <!-- Header Section -->
+        <div class="header">
+            <h1 data-localize="business_dashboard">Business Dashboard</h1>
+            <div>
+                <span data-localize="logged_in_as">Logged in as: </span>
+                <span id="currentUser"></span>
+                <button class="action-button" onclick="showSettings()" data-localize="settings">⚙️ Settings</button>
+            </div>
+        </div>
 
-    <main class="container">
-        <!-- Employees Section -->
-        <section id="employees" class="section hidden">
-            <div class="section-header">
-                <h2>Manage Employees</h2>
-                <div>
-                    <button class="action-button success" onclick="showForm('employee')">➕ Add Employee</button>
-                    <div class="progress-bar" style="width: 200px">
-                        <div class="progress-fill" id="team-progress" style="width: 30%"></div>
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
+            <button class="nav-button" data-section="employees" data-localize="employees">Employees</button>
+            <button class="nav-button" data-section="inventory" data-localize="inventory">Inventory</button>
+            <button class="nav-button" data-section="sales" data-localize="sales">Sales</button>
+            <button class="nav-button" data-section="reports" data-localize="reports">Reports</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="container">
+            <!-- Employees Section -->
+            <section id="employees" class="section">
+                <div class="section-header">
+                    <h2 data-localize="manage_employees">Manage Employees</h2>
+                    <button class="action-button success" onclick="showEmployeeForm()" data-localize="add_employee">➕ Add Employee</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-localize="name">Name</th>
+                            <th data-localize="position">Position</th>
+                            <th data-localize="salary">Salary</th>
+                            <th data-localize="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeList"></tbody>
+                </table>
+            </section>
+
+            <!-- Inventory Section -->
+            <section id="inventory" class="section hidden">
+                <div class="section-header">
+                    <h2 data-localize="manage_inventory">Manage Inventory</h2>
+                    <button class="action-button success" onclick="showInventoryForm()" data-localize="add_product">➕ Add Product</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-localize="product">Product</th>
+                            <th data-localize="stock">Stock</th>
+                            <th data-localize="price">Price</th>
+                            <th data-localize="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryList"></tbody>
+                </table>
+            </section>
+
+            <!-- Sales Section -->
+            <section id="sales" class="section hidden">
+                <div class="section-header">
+                    <h2 data-localize="sales_management">Sales Management</h2>
+                    <div>
+                        <span class="currency-display" data-currency="USD" id="totalIncome">0.00</span>
+                        <button class="action-button success" onclick="showSaleForm()" data-localize="add_sale">➕ New Sale</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-localize="date">Date</th>
+                            <th data-localize="product">Product</th>
+                            <th data-localize="quantity">Quantity</th>
+                            <th data-localize="total">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesList"></tbody>
+                </table>
+            </section>
+        </main>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <h3 data-localize="system_settings">System Settings</h3>
+                <div class="settings-tabs">
+                    <button class="action-button" onclick="showSettingsTab('user')" data-localize="user_management">Users</button>
+                    <button class="action-button" onclick="showSettingsTab("security")" data-localize="security">Security</button>
+                    <button class="action-button" onclick="showSettingsTab("localization")" data-localize="localization">Localization</button>
+                </div>
+
+                <!-- User Management -->
+                <div id="userSettings" class="settings-tab">
+                    <h4 data-localize="manage_users">Manage Users</h4>
+                    <button class="action-button success" onclick="showUserForm()" data-localize="add_user">➕ Add User</button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-localize="username">Username</th>
+                                <th data-localize="role">Role</th>
+                                <th data-localize="actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userList"></tbody>
+                    </table>
+                </div>
+
+                <!-- Security Settings -->
+                <div id="securitySettings" class="settings-tab hidden">
+                    <h4 data-localize="change_password">Change Password</h4>
+                    <div class="form-group">
+                        <input type="password" id="currentPassword" placeholder="Current Password">
+                        <input type="password" id="newPassword" placeholder="New Password" oninput="checkPasswordStrength(this.value)">
+                        <div class="password-strength">
+                            <div id="passwordStrength"></div>
+                        </div>
+                        <button class="action-button success" onclick="changePassword()" data-localize="update">Update</button>
+                    </div>
+                </div>
+
+                <!-- Localization Settings -->
+                <div id="localizationSettings" class="settings-tab hidden">
+                    <h4 data-localize="localization_settings">Localization Settings</h4>
+                    <div class="form-group">
+                        <label data-localize="language">Language</label>
+                        <select id="languageSelect" onchange="updateLanguage(this.value)">
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-localize="currency">Currency</label>
+                        <select id="currencySelect" onchange="updateCurrency(this.value)">
+                            <option value="USD">US Dollar ($)</option>
+                            <option value="EUR">Euro (€)</option>
+                            <option value="JPY">Japanese Yen (¥)</option>
+                        </select>
                     </div>
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr><th>Name</th><th>Role</th><th>Level</th><th>XP</th><th>Actions</th></tr>
-                </thead>
-                <tbody id="employee-list"></tbody>
-            </table>
-        </section>
-
-        <!-- Inventory Section -->
-        <section id="inventory" class="section hidden">
-            <div class="section-header">
-                <h2>Inventory Management</h2>
-                <div>
-                    <button class="action-button success" onclick="showForm('product')">📦 Add Product</button>
-                    <div class="progress-bar" style="width: 200px">
-                        <div class="progress-fill" id="stock-progress" style="width: 60%"></div>
-                    </div>
-                </div>
-            </div>
-            <table>
-                <thead>
-                    <tr><th>Product</th><th>Stock</th><th>Value</th><th>Actions</th></tr>
-                </thead>
-                <tbody id="inventory-list"></tbody>
-            </table>
-        </section>
-
-        <!-- Sales Section -->
-        <section id="sales" class="section hidden">
-            <div class="section-header">
-                <h2>Sales Dashboard</h2>
-                <div>
-                    <button class="action-button success" onclick="showForm('sale')">💰 New Sale</button>
-                    <div id="daily-target">Daily Target: $5000</div>
-                </div>
-            </div>
-            <table>
-                <thead>
-                    <tr><th>Product</th><th>Qty</th><th>Total</th><th>XP Earned</th></tr>
-                </thead>
-                <tbody id="sales-list"></tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- Form Modal -->
-    <div class="modal" id="formModal">
-        <div class="modal-content">
-            <h3 id="modalTitle"></h3>
-            <div id="formContent"></div>
         </div>
     </div>
 
     <script>
-        let adminPoints = 0;
-        let achievements = [];
-        const employees = [];
-        const inventory = [];
-        const sales = [];
-
-        // Game Configuration
-        const GAME_CONFIG = {
-            xpPerAction: 10,
-            xpLevelThreshold: 100,
-            pointValues: {
-                employee: 50,
-                product: 30,
-                sale: 20
+        // System Configuration
+        const SYSTEM_CONFIG = {
+            exchangeRates: { USD: 1, EUR: 0.93, JPY: 148.5 },
+            currentUser: null,
+            users: [
+                { username: 'admin', password: 'admin123', role: 'admin' }
+            ],
+            employees: [],
+            inventory: [],
+            sales: [],
+            totalIncome: 0,
+            settings: {
+                language: 'en',
+                currency: 'USD'
+            },
+            translations: {
+                en: {
+                    welcome: "Welcome to Business Management Pro",
+                    username: "Username",
+                    password: "Password",
+                    login: "Login",
+                    settings: "Settings",
+                    // Add all other translations
+                },
+                es: {
+                    welcome: "Bienvenido a Business Management Pro",
+                    username: "Usuario",
+                    password: "Contraseña",
+                    login: "Iniciar sesión",
+                    settings: "Configuraciones"
+                },
+                fr: {
+                    welcome: "Bienvenue dans Business Management Pro",
+                    username: "Nom d'utilisateur",
+                    password: "Mot de passe",
+                    login: "Connexion",
+                    settings: "Paramètres"
+                }
             }
         };
 
-        // Initialize the dashboard
+        // Initialization
         document.addEventListener('DOMContentLoaded', () => {
-            initializeSampleData();
-            document.querySelectorAll('.nav-button').forEach(button => {
-                button.addEventListener('click', () => showSection(button.dataset.section));
-            });
-            showSection('employees');
+            applyLocalization();
+            loadData();
         });
 
-        // Core Game Functions
-        function updateScore(points) {
-            adminPoints += points;
-            document.getElementById('score-display').textContent = `Admin Points: ${adminPoints}`;
-            if(points > 0) {
-                showNotification(`+${points} Points!`, 'success');
+        // Core Functions
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const user = SYSTEM_CONFIG.users.find(u => u.username === username && u.password === password);
+            if(user) {
+                SYSTEM_CONFIG.currentUser = user;
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                document.getElementById('currentUser').textContent = user.username;
+                updateUI();
+            } else {
+                alert('Invalid credentials');
             }
-            checkAchievements();
         }
 
-        function showNotification(text, type) {
-            const notif = document.createElement('div');
-            notif.className = `floating-notification ${type}`;
-            notif.textContent = text;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 2000);
+        function showSettings() {
+            document.getElementById('settingsModal').style.display = 'flex';
         }
 
-        function checkAchievements() {
-            const newAchievements = [
-                { id: 1, name: 'First Hire', condition: employees.length >= 1 },
-                { id: 2, name: 'Stock Master', condition: inventory.length >= 5 },
-                { id: 3, name: 'Sales Guru', condition: sales.length >= 10 }
-            ].filter(a => !achievements.includes(a.id) && a.condition);
-
-            newAchievements.forEach(ach => {
-                achievements.push(ach.id);
-                showNotification(`🏆 Achievement Unlocked: ${ach.name}!`, 'achievement');
-                updateScore(100);
-            });
-        }
-
-        // Data Management Functions
-        function showForm(type) {
-            const forms = {
-                employee: {
-                    title: 'Hire New Employee',
-                    fields: ['Name', 'Role', 'Email'],
-                    callback: saveEmployee
-                },
-                product: {
-                    title: 'Add New Product',
-                    fields: ['Product Name', 'SKU', 'Price', 'Stock'],
-                    callback: saveProduct
-                },
-                sale: {
-                    title: 'Record New Sale',
-                    fields: ['Product', 'Quantity', 'Customer'],
-                    callback: saveSale
-                }
-            };
-
-            const { title, fields, callback } = forms[type];
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('formContent').innerHTML = `
-                ${fields.map(field => `
-                    <div class="form-group">
-                        <label>${field}</label>
-                        <input type="${field === 'Stock' ? 'number' : 'text'}" required>
-                    </div>
-                `).join('')}
-                <button class="action-button success" onclick="${callback.name}()">Save</button>
-            `;
-            document.getElementById('formModal').style.display = 'flex';
+        // Data Management
+        function showEmployeeForm() {
+            showModal('Add Employee', `
+                <div class="form-group">
+                    <label data-localize="full_name">Full Name</label>
+                    <input type="text" id="empName" required>
+                </div>
+                <div class="form-group">
+                    <label data-localize="position">Position</label>
+                    <input type="text" id="empPosition" required>
+                </div>
+                <button class="action-button success" onclick="saveEmployee()" data-localize="save">Save</button>
+            `);
         }
 
         function saveEmployee() {
             const newEmployee = {
-                name: document.querySelector('#formContent input').value,
-                role: document.querySelectorAll('#formContent input')[1].value,
-                level: 1,
-                xp: 0
+                id: Date.now(),
+                name: document.getElementById('empName').value,
+                position: document.getElementById('empPosition').value,
+                salary: "₹50,000"
             };
-            employees.push(newEmployee);
-            updateScore(GAME_CONFIG.pointValues.employee);
+            SYSTEM_CONFIG.employees.push(newEmployee);
             renderEmployees();
-            closeModal();
-        }
-
-        function saveProduct() {
-            const newProduct = {
-                name: document.querySelector('#formContent input').value,
-                sku: document.querySelectorAll('#formContent input')[1].value,
-                price: document.querySelectorAll('#formContent input')[2].value,
-                stock: document.querySelectorAll('#formContent input')[3].value
-            };
-            inventory.push(newProduct);
-            updateScore(GAME_CONFIG.pointValues.product);
-            renderInventory();
-            closeModal();
-        }
-
-        function saveSale() {
-            const newSale = {
-                product: document.querySelector('#formContent input').value,
-                quantity: document.querySelectorAll('#formContent input')[1].value,
-                customer: document.querySelectorAll('#formContent input')[2].value,
-                xp: GAME_CONFIG.xpPerAction
-            };
-            sales.push(newSale);
-            updateScore(GAME_CONFIG.pointValues.sale);
-            renderSales();
             closeModal();
         }
 
         // Rendering Functions
         function renderEmployees() {
-            const tbody = document.getElementById('employee-list');
-            tbody.innerHTML = employees.map(emp => `
+            const tbody = document.getElementById('employeeList');
+            tbody.innerHTML = SYSTEM_CONFIG.employees.map(emp => `
                 <tr>
                     <td>${emp.name}</td>
-                    <td>${emp.role}</td>
-                    <td>${emp.level}</td>
-                    <td>${emp.xp}/100</td>
+                    <td>${emp.position}</td>
+                    <td>${emp.salary}</td>
                     <td>
-                        <button class="action-button edit">✏️</button>
-                        <button class="action-button delete">🗑️</button>
+                        <button class="action-button edit" onclick="editEmployee('${emp.id}')">✏️</button>
+                        <button class="action-button delete" onclick="deleteEmployee('${emp.id}')">🗑️</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function renderInventory() {
-            const tbody = document.getElementById('inventory-list');
-            tbody.innerHTML = inventory.map(prod => `
-                <tr>
-                    <td>${prod.name}</td>
-                    <td>${prod.stock}</td>
-                    <td>$${prod.price}</td>
-                    <td>
-                        <button class="action-button edit">✏️</button>
-                        <button class="action-button delete">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
+        // Localization
+        function updateLanguage(lang) {
+            SYSTEM_CONFIG.settings.language = lang;
+            applyLocalization();
         }
 
-        function renderSales() {
-            const tbody = document.getElementById('sales-list');
-            tbody.innerHTML = sales.map(sale => `
-                <tr>
-                    <td>${sale.product}</td>
-                    <td>${sale.quantity}</td>
-                    <td>$${sale.quantity * 50}</td>
-                    <td>+${sale.xp} XP</td>
-                </tr>
-            `).join('');
+        function applyLocalization() {
+            document.querySelectorAll('[data-localize]').forEach(el => {
+                const key = el.getAttribute('data-localize');
+                el.textContent = SYSTEM_CONFIG.translations[SYSTEM_CONFIG.settings.language][key] || key;
+            });
         }
 
         // Utility Functions
+        function showModal(title, content) {
+            document.getElementById('settingsModal').style.display = 'flex';
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').innerHTML = content;
+        }
+
         function closeModal() {
-            document.getElementById('formModal').style.display = 'none';
+            document.getElementById('settingsModal').style.display = 'none';
         }
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => section.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        function initializeSampleData() {
-            employees.push({ name: 'John Doe', role: 'Manager', level: 3, xp: 250 });
-            inventory.push({ name: 'Starter Product', sku: 'PROD001', price: 99.99, stock: 50 });
+        function updateUI() {
             renderEmployees();
-            renderInventory();
-            renderSales();
+            // Add other render functions
         }
+
+        // Data Persistence
+        function saveData() {
+            localStorage.setItem('businessData', JSON.stringify(SYSTEM_CONFIG));
+        }
+
+        function loadData() {
+            const data = localStorage.getItem('businessData');
+            if(data) Object.assign(SYSTEM_CONFIG, JSON.parse(data));
+        }
+
+        // Event Listeners
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const sectionId = button.dataset.section;
+                document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+                document.getElementById(sectionId).classList.remove('hidden');
+            });
+        });
     </script>
 </body>
 </html>
