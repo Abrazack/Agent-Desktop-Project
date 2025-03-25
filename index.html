@@ -1,12 +1,38 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agent Desktop Project</title>
+    <title>Agent Desktop Web</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to Agent Desktop Project</h1>
-    <p>GitHub Pages is now working!</p>
+    <div id="loginSection">
+        <h2>Login</h2>
+        <select id="roleSelect">
+            <option value="admin">Admin</option>
+            <option value="employee">Employee</option>
+        </select>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div id="mainSection" style="display: none;">
+        <h2>Welcome <span id="userWelcome"></span></h2>
+        <div id="adminControls" style="display: none;">
+            <button onclick="showEmployeeManager()">Manage Employees</button>
+            <button onclick="showInventoryManager()">Manage Inventory</button>
+            <button onclick="showLogs()">View Logs</button>
+        </div>
+        <div id="employeeControls" style="display: none;">
+            <button onclick="viewInventory()">View Inventory</button>
+            <button onclick="viewProfile()">View Profile</button>
+        </div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
