@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-language="en">
 <head>
@@ -182,6 +181,10 @@
             margin-right: 5px;
             font-weight: bold;
         }
+        #scanner {
+            width: 300px;
+            height: 200px;
+        }
     </style>
 </head>
 <body>
@@ -349,13 +352,50 @@
         </div>
     </div>
 
+    <!-- Employee Dashboard -->
+    <div id="employeeDashboard" class="hidden">
+        <div class="header">
+            <h1>Employee Dashboard</h1>
+            <div>
+                <span id="employeeInfo"></span>
+                <button class="action-button" onclick="showSettings()" data-localize="settings">⚙️ Settings</button>
+            </div>
+        </div>
+        <div class="container">
+            <button class="nav-button" onclick="viewInventory()">View Inventory</button>
+            <button class="nav-button" onclick="showScannerSection()">Use Scanner</button>
+            <section id="employeeInventory" class="section hidden">
+                <h2>Inventory</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeInventoryList"></tbody>
+                </table>
+            </section>
+            <section id="scannerSection" class="section hidden">
+                <h2>Barcode Scanner</h2>
+                <video id="scanner" autoplay></video>
+                <input type="text" id="barcodeInput" placeholder="Enter barcode or product code">
+                <button class="action-button success" onclick="processSale()">Process Sale</button>
+            </section>
+        </div>
+    </div>
+
+
     <script>
         // System Configuration
         const SYSTEM_CONFIG = {
             exchangeRates: { USD: 1, EUR: 0.93, JPY: 148.5 },
             currentUser: null,
             users: [
-                { username: 'admin', password: 'admin123', role: 'admin' }
+                { username: 'admin', password: 'admin123', role: 'admin' },
+                { username: 'employee1', password: 'employee123', role: 'employee', id: 1 }
             ],
             employees: [],
             inventory: [],
@@ -371,7 +411,43 @@
                     username: "Username",
                     password: "Password",
                     login: "Login",
-                    settings: "Settings"
+                    settings: "Settings",
+                    full_name: "Full Name",
+                    position: "Position",
+                    save: "Save",
+                    business_dashboard: "Business Dashboard",
+                    logged_in_as: "Logged in as:",
+                    manage_employees: "Manage Employees",
+                    add_employee: "Add Employee",
+                    name: "Name",
+                    salary: "Salary",
+                    actions: "Actions",
+                    inventory: "Inventory",
+                    manage_inventory: "Manage Inventory",
+                    add_product: "Add Product",
+                    product: "Product",
+                    stock: "Stock",
+                    price: "Price",
+                    sales: "Sales",
+                    sales_management: "Sales Management",
+                    add_sale: "Add Sale",
+                    date: "Date",
+                    quantity: "Quantity",
+                    total: "Total",
+                    system_settings: "System Settings",
+                    user_management: "User Management",
+                    manage_users: "Manage Users",
+                    add_user: "Add User",
+                    role: "Role",
+                    security: "Security",
+                    change_password: "Change Password",
+                    update: "Update",
+                    localization: "Localization",
+                    localization_settings: "Localization Settings",
+                    language: "Language",
+                    currency: "Currency",
+                    employees: "Employees",
+                    reports: "Reports"
                 },
                 es: {
                     welcome: "Bienvenido a Business Management Pro",
@@ -397,19 +473,39 @@
         });
 
         // Core Functions
-        function login() {
+        async function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            
-            const user = SYSTEM_CONFIG.users.find(u => u.username === username && u.password === password);
-            if(user) {
-                SYSTEM_CONFIG.currentUser = user;
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = user.username;
-                updateUI();
-            } else {
-                alert('Invalid credentials');
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    SYSTEM_CONFIG.currentUser = data.user;
+                    document.getElementById('loginPage').classList.add('hidden');
+
+                    if (data.user.role === 'admin') {
+                        document.getElementById('dashboard').classList.remove('hidden');
+                        document.getElementById('currentUser').textContent = data.user.username;
+                    } else {
+                        document.getElementById('employeeDashboard').classList.remove('hidden');
+                        document.getElementById('employeeInfo').textContent = `${data.user.username} (${data.user.role})`;
+                    }
+                    updateUI();
+                } else {
+                    alert('Invalid credentials');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please try again.');
             }
         }
 
@@ -507,6 +603,114 @@
                 document.getElementById(sectionId).classList.remove('hidden');
             });
         });
+
+        function showScannerSection() {
+            document.getElementById('scannerSection').classList.remove('hidden');
+            document.getElementById('employeeInventory').classList.add('hidden');
+            initScanner();
+        }
+
+        function viewInventory() {
+            document.getElementById('scannerSection').classList.add('hidden');
+            document.getElementById('employeeInventory').classList.remove('hidden');
+            loadEmployeeInventory();
+        }
+
+        async function initScanner() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                const video = document.getElementById('scanner');
+                video.srcObject = stream;
+                video.play();
+                // Here you would implement actual barcode scanning logic
+            } catch (error) {
+                console.error('Scanner error:', error);
+                alert('Could not access camera. Please use manual input.');
+            }
+        }
+
+        async function processSale() {
+            const barcode = document.getElementById('barcodeInput').value;
+            if (!barcode) {
+                alert('Please scan a product or enter code manually');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/sales', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: barcode,
+                        quantity: 1,
+                        employee_id: SYSTEM_CONFIG.currentUser.id
+                    })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Sale processed successfully!');
+                    document.getElementById('barcodeInput').value = '';
+                } else {
+                    alert('Sale failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Sale error:', error);
+                alert('Sale processing failed. Please try again.');
+            }
+        }
+
+        async function loadEmployeeInventory() {
+            try {
+                const response = await fetch('/api/inventory');
+                const inventory = await response.json();
+
+                const tbody = document.getElementById('employeeInventoryList');
+                tbody.innerHTML = inventory.map(item => `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>
+                            <button class="action-button success" onclick="quickSale(${item.id})">Quick Sale</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Inventory load error:', error);
+                alert('Could not load inventory. Please try again.');
+            }
+        }
+
+        async function quickSale(productId) {
+            try {
+                const response = await fetch('/api/sales', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: 1,
+                        employee_id: SYSTEM_CONFIG.currentUser.id
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Sale processed successfully!');
+                    loadEmployeeInventory();
+                } else {
+                    alert('Sale failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Quick sale error:', error);
+                alert('Sale processing failed. Please try again.');
+            }
+        }
+
+
     </script>
 </body>
 </html>
