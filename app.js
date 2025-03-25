@@ -6,8 +6,14 @@ function login() {
     const password = document.getElementById('password').value;
     const role = document.getElementById('roleSelect').value;
 
+    if (!role) {
+        alert('Please select a role');
+        return;
+    }
+
     // In a real application, this would be a server request
-    if (username === 'admin' && password === 'admin123' && role === 'admin') {
+    if ((role === 'admin' && username === 'admin' && password === 'admin123') || 
+        (role === 'employee' && username === 'emp' && password === 'emp123')) {
         currentUser = { username, role };
         showMainSection();
     } else {
