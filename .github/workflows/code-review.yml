@@ -1,0 +1,42 @@
+name: AI Code Review & Auto Fix with DeepSeek
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * *'  # Runs every day at 2 AM
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run AI Code Review with DeepSeek
+        run: |
+          curl -X POST "https://api.deepseek.com/v1/code-review" \
+            -H "Authorization: Bearer ${{ secrets.DEEPSEEK_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "deepseek-code-review",
+              "input": "Review and improve this project code",
+              "code": "'"$(cat your_project/*.py)"'"
+            }' > review_results.json
+
+      - name: Apply AI Suggestions Automatically
+        run: |
+          cat review_results.json | jq -r '.suggestions[] | .fix' > fixes.sh
+          bash fixes.sh || echo "No fixes applied"
+
+      - name: Commit & Push Changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add .
+          git commit -m "Auto-fixed by DeepSeek AI"
+          git push
