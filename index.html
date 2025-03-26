@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en" data-language="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Management Pro</title>
+    <title>Mhappy Store Management Tool</title>
     <style>
         :root {
             --primary-color: #2f7366;
@@ -22,7 +21,7 @@
             color: #333;
         }
 
-        .login-container {
+        .login-container, .role-container {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,7 +29,7 @@
             background: var(--background-color);
         }
 
-        .login-box {
+        .login-box, .role-box {
             background: white;
             padding: 2rem;
             border-radius: 8px;
@@ -183,12 +182,31 @@
             font-weight: bold;
         }
     </style>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';">
 </head>
 <body>
+    <!-- Role Selection -->
+    <div class="role-container" id="rolePage">
+        <div class="role-box">
+            <h2 data-localize="select_role">Select Role</h2>
+            <form id="roleForm" onsubmit="event.preventDefault(); selectRole()">
+                <div class="form-group">
+                    <label data-localize="role">Role</label>
+                    <select id="roleSelect" required>
+                        <option value="">Select Role</option>
+                        <option value="admin">Admin</option>
+                        <option value="employee">Employee</option>
+                    </select>
+                </div>
+                <button class="action-button success" data-localize="continue">Continue</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Login System -->
-    <div class="login-container" id="loginPage">
+    <div class="login-container hidden" id="loginPage">
         <div class="login-box">
-            <h2 data-localize="welcome">Business Management Pro</h2>
+            <h2 data-localize="welcome">Mhappy Store Management Tool</h2>
             <form id="loginForm" onsubmit="event.preventDefault(); login()">
                 <div class="form-group">
                     <label data-localize="username">Username</label>
@@ -198,24 +216,8 @@
                     <label data-localize="password">Password</label>
                     <input type="password" id="password" required>
                 </div>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 8be7fcbc1ec65ee71329750ebe40d170f8ae357b
-                <div class="form-group">
-                    <label data-localize="role">Role</label>
-                    <select id="roleSelect" required>
-                        <option value="">Select Role</option>
-                        <option value="admin">Admin</option>
-                        <option value="employee">Employee</option>
-                    </select>
-                </div>
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/main
->>>>>>> 8be7fcbc1ec65ee71329750ebe40d170f8ae357b
                 <button class="action-button success" data-localize="login">Login</button>
+                <button class="action-button" onclick="goBackToRoleSelection()" data-localize="back">Back</button>
             </form>
         </div>
     </div>
@@ -309,18 +311,8 @@
                 <h3 data-localize="system_settings">System Settings</h3>
                 <div class="settings-tabs">
                     <button class="action-button" onclick="showSettingsTab('user')" data-localize="user_management">Users</button>
-<<<<<<< HEAD
                     <button class="action-button" onclick="showSettingsTab('security')" data-localize="security">Security</button>
                     <button class="action-button" onclick="showSettingsTab('localization')" data-localize="localization">Localization</button>
-=======
-<<<<<<< HEAD
-                    <button class="action-button" onclick="showSettingsTab('security')" data-localize="security">Security</button>
-                    <button class="action-button" onclick="showSettingsTab('localization')" data-localize="localization">Localization</button>
-=======
-                    <button class="action-button" onclick="showSettingsTab("security")" data-localize="security">Security</button>
-                    <button class="action-button" onclick="showSettingsTab("localization")" data-localize="localization">Localization</button>
->>>>>>> origin/main
->>>>>>> 8be7fcbc1ec65ee71329750ebe40d170f8ae357b
                 </div>
 
                 <!-- User Management -->
@@ -381,8 +373,10 @@
         const SYSTEM_CONFIG = {
             exchangeRates: { USD: 1, EUR: 0.93, JPY: 148.5 },
             currentUser: null,
+            selectedRole: null,
             users: [
-                { username: 'admin', password: 'admin123', role: 'admin' }
+                { username: 'admin', password: 'admin123', role: 'admin' },
+                { username: 'employee', password: 'employee123', role: 'employee' }
             ],
             employees: [],
             inventory: [],
@@ -394,155 +388,116 @@
             },
             translations: {
                 en: {
-                    welcome: "Welcome to Business Management Pro",
+                    select_role: "Select Role",
+                    welcome: "Welcome to Mhappy Store Management Tool",
+                    role: "Role",
                     username: "Username",
                     password: "Password",
                     login: "Login",
-<<<<<<< HEAD
-                    settings: "Settings"
-=======
-<<<<<<< HEAD
-                    settings: "Settings"
-=======
+                    continue: "Continue",
+                    back: "Back",
+                    business_dashboard: "Business Dashboard",
+                    logged_in_as: "Logged in as:",
                     settings: "Settings",
-                    // Add all other translations
->>>>>>> origin/main
->>>>>>> 8be7fcbc1ec65ee71329750ebe40d170f8ae357b
+                    manage_employees: "Manage Employees",
+                    add_employee: "➕ Add Employee",
+                    name: "Name",
+                    position: "Position",
+                    salary: "Salary",
+                    actions: "Actions",
+                    manage_inventory: "Manage Inventory",
+                    add_product: "➕ Add Product",
+                    product: "Product",
+                    stock: "Stock",
+                    price: "Price",
+                    sales_management: "Sales Management",
+                    add_sale: "➕ New Sale",
+                    date: "Date",
+                    quantity: "Quantity",
+                    total: "Total",
+                    system_settings: "System Settings",
+                    user_management: "Users",
+                    security: "Security",
+                    localization: "Localization",
+                    manage_users: "Manage Users",
+                    add_user: "➕ Add User",
+                    change_password: "Change Password",
+                    current_password: "Current Password",
+                    new_password: "New Password",
+                    update: "Update",
+                    localization_settings: "Localization Settings",
+                    language: "Language",
+                    currency: "Currency"
                 },
                 es: {
-                    welcome: "Bienvenido a Business Management Pro",
+                    select_role: "Seleccionar Rol",
+                    welcome: "Bienvenido a la herramienta de gestión Mhappy Store",
+                    role: "Rol",
                     username: "Usuario",
                     password: "Contraseña",
                     login: "Iniciar sesión",
-                    settings: "Configuraciones"
+                    continue: "Continuar",
+                    back: "Atrás",
+                    business_dashboard: "Panel de Negocios",
+                    logged_in_as: "Conectado como:",
+                    settings: "Configuraciones",
+                    manage_employees: "Gestionar Empleados",
+                    add_employee: "➕ Agregar Empleado",
+                    name: "Nombre",
+                    position: "Posición",
+                    salary: "Salario",
+                    actions: "Acciones",
+                    manage_inventory: "Gestionar Inventario",
+                    add_product: "➕ Agregar Producto",
+                    product: "Producto",
+                    stock: "Stock",
+                    price: "Precio",
+                    sales_management: "Gestión de Ventas",
+                    add_sale: "➕ Nueva Venta",
+                    date: "Fecha",
+                    quantity: "Cantidad",
+                    total: "Total",
+                    system_settings: "Configuraciones del Sistema",
+                    user_management: "Usuarios",
+                    security: "Seguridad",
+                    localization: "Localización",
+                    manage_users: "Gestionar Usuarios",
+                    add_user: "➕ Agregar Usuario",
+                    change_password: "Cambiar Contraseña",
+                    current_password: "Contraseña Actual",
+                    new_password: "Nueva Contraseña",
+                    update: "Actualizar",
+                    localization_settings: "Configuraciones de Localización",
+                    language: "Idioma",
+                    currency: "Moneda"
                 },
                 fr: {
-                    welcome: "Bienvenue dans Business Management Pro",
+                    select_role: "Sélectionner le rôle",
+                    welcome: "Bienvenue dans l'outil de gestion de magasin Mhappy",
+                    role: "Rôle",
                     username: "Nom d'utilisateur",
                     password: "Mot de passe",
                     login: "Connexion",
-                    settings: "Paramètres"
-                }
-            }
-        };
-
-        // Initialization
-        document.addEventListener('DOMContentLoaded', () => {
-            applyLocalization();
-            loadData();
-        });
-
-        // Core Functions
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            const user = SYSTEM_CONFIG.users.find(u => u.username === username && u.password === password);
-            if(user) {
-                SYSTEM_CONFIG.currentUser = user;
-                document.getElementById('loginPage').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('currentUser').textContent = user.username;
-                updateUI();
-            } else {
-                alert('Invalid credentials');
-            }
-        }
-
-        function showSettings() {
-            document.getElementById('settingsModal').style.display = 'flex';
-        }
-
-        // Data Management
-        function showEmployeeForm() {
-            showModal('Add Employee', `
-                <div class="form-group">
-                    <label data-localize="full_name">Full Name</label>
-                    <input type="text" id="empName" required>
-                </div>
-                <div class="form-group">
-                    <label data-localize="position">Position</label>
-                    <input type="text" id="empPosition" required>
-                </div>
-                <button class="action-button success" onclick="saveEmployee()" data-localize="save">Save</button>
-            `);
-        }
-
-        function saveEmployee() {
-            const newEmployee = {
-                id: Date.now(),
-                name: document.getElementById('empName').value,
-                position: document.getElementById('empPosition').value,
-                salary: "₹50,000"
-            };
-            SYSTEM_CONFIG.employees.push(newEmployee);
-            renderEmployees();
-            closeModal();
-        }
-
-        // Rendering Functions
-        function renderEmployees() {
-            const tbody = document.getElementById('employeeList');
-            tbody.innerHTML = SYSTEM_CONFIG.employees.map(emp => `
-                <tr>
-                    <td>${emp.name}</td>
-                    <td>${emp.position}</td>
-                    <td>${emp.salary}</td>
-                    <td>
-                        <button class="action-button edit" onclick="editEmployee('${emp.id}')">✏️</button>
-                        <button class="action-button delete" onclick="deleteEmployee('${emp.id}')">🗑️</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Localization
-        function updateLanguage(lang) {
-            SYSTEM_CONFIG.settings.language = lang;
-            applyLocalization();
-        }
-
-        function applyLocalization() {
-            document.querySelectorAll('[data-localize]').forEach(el => {
-                const key = el.getAttribute('data-localize');
-                el.textContent = SYSTEM_CONFIG.translations[SYSTEM_CONFIG.settings.language][key] || key;
-            });
-        }
-
-        // Utility Functions
-        function showModal(title, content) {
-            document.getElementById('settingsModal').style.display = 'flex';
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalContent').innerHTML = content;
-        }
-
-        function closeModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-
-        function updateUI() {
-            renderEmployees();
-            // Add other render functions
-        }
-
-        // Data Persistence
-        function saveData() {
-            localStorage.setItem('businessData', JSON.stringify(SYSTEM_CONFIG));
-        }
-
-        function loadData() {
-            const data = localStorage.getItem('businessData');
-            if(data) Object.assign(SYSTEM_CONFIG, JSON.parse(data));
-        }
-
-        // Event Listeners
-        document.querySelectorAll('.nav-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const sectionId = button.dataset.section;
-                document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
-                document.getElementById(sectionId).classList.remove('hidden');
-            });
-        });
-    </script>
-</body>
-</html>
+                    continue: "Continuer",
+                    back: "Retour",
+                    business_dashboard: "Tableau de Bord",
+                    logged_in_as: "Connecté en tant que:",
+                    settings: "Paramètres",
+                    manage_employees: "Gérer les Employés",
+                    add_employee: "➕ Ajouter un Employé",
+                    name: "Nom",
+                    position: "Poste",
+                    salary: "Salaire",
+                    actions: "Actions",
+                    manage_inventory: "Gérer l'Inventaire",
+                    add_product: "➕ Ajouter un Produit",
+                    product: "Produit",
+                    stock: "Stock",
+                    price: "Prix",
+                    sales_management: "Gestion des Ventes",
+                    add_sale: "➕ Nouvelle Vente",
+                    date: "Date",
+                    quantity: "Quantité",
+                    total: "Total",
+                    system_settings: "Paramètres du Système",
+                    user_management:
